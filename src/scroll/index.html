@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            list-style: none;
+        }
+        html, body, .wrapper{
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        li {
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+        }
+        .pulldown-wrapper {
+            width: 100%;
+            height: 80px;
+            /* line-height: 80px; */
+            /* background-color: gold; */
+            position: absolute;
+            top: -50px;
+            left: 0px;
+            text-align: center;
+        }
+        .pulldown-wrapper div {
+            display: none;
+            margin-top: 20px; 
+        }
+        .pulldown-wrapper img {
+            display: none;
+            margin-top: 20px;
+        }
+        #canvas {
+            /* background: #f40; */
+            margin: 0 auto;
+        }
+        .scroll-wrapper {
+            position: relative;
+            z-index: 100;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="scroll-wrapper">
+            <ul class="content">
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+                <li>5</li>
+                <li>6</li>
+                <li>7</li>
+                <li>8</li>
+                <li>9</li>
+                <li>10</li>
+                <li>11</li>
+                <li>12</li>
+                <li>13</li>
+                <li>14</li>
+                <li>15</li>
+                <li>16</li>
+                <li>17</li>
+                <li>18</li>
+                <li>19</li>
+                <li>20</li>
+                <li>21</li>
+                <li>22</li>
+                <li>23</li>
+                <li>24</li>
+                <li>25</li>
+                <li>26</li>
+                <li>27</li>
+                <li>28</li>
+                <li>29</li>
+                <li>30</li>
+                <li>31</li>
+                <li>32</li>
+                <li>33</li>
+                <li>34</li>
+                <li>35</li>
+                <li>36</li>
+                <li>37</li>
+                <li>38</li>
+                <li>39</li>
+                <li>40</li>
+                <li>41</li>
+                <li>42</li>
+                <li>43</li>
+                <li>44</li>
+                <li>45</li>
+                <li>46</li>
+                <li>47</li>
+                <li>48</li>
+                <li>49</li>
+                <li>50</li>
+            </ul>
+        </div>
+        <div class="pulldown-wrapper">
+            <canvas id="canvas" width="100" height="80"></canvas>
+            <img src="./loading.gif" alt="" width="20" height="20">
+            <div>加载完成</div>
+        </div>
+    </div>
+</body>
+<script src="https://unpkg.com/better-scroll/dist/bscroll.min.js "></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+    let initRadius = 18;
+    // let initsmRadius = 10;
+    let minHeadRadius = 12;
+    let smRadius = 5;
+
+    let maxdistance = 40;
+    let distance = 0;
+
+    let initArrowRadius = 10;
+    let minArrowRadius = 6;
+    let arrowWidth = 3;
+
+    // let dy = 40;
+    let centerX = 25;
+    let centerY = 25;
+    let headerCenter = {
+        x: centerX,
+        y: centerY
+    }
+    let scroll = new BScroll($('.wrapper').get(0), {
+        pullDownRefresh: {
+            threshold: 90,
+            // stop: 20
+        }
+    });
+
+    scroll.on('pullingDown', function () {
+        $('canvas').hide();
+        $('.pulldown-wrapper img').show();
+        setTimeout(function () {
+            $('.pulldown-wrapper img').hide();
+            $('.pulldown-wrapper div').fadeIn();
+            add();
+            setTimeout(function () {
+                $('.pulldown-wrapper div').fadeOut();
+                scroll.finishPullDown();
+            }, 1000);
+            setTimeout(function () {
+                $('canvas').show();
+                scroll.refresh();
+            }, 1300);
+        }, 2000);
+    });
+
+    function add(dir) {
+        let str = '';
+        for (let i = 0; i < 5; i++) {
+            str += `<li>我是新增第${i}个</li>`
+        }
+        $('ul').prepend(str);
+    }
+
+    scroll.on('scroll', function (pos) {
+        let top = Math.min(pos.y - 50, 10);
+        $('.pulldown-wrapper').css('top', top);
+
+        distance= Math.max(0, Math.min((pos.y - 50), maxdistance));
+
+        draw();
+    });
+
+    function draw() {
+        let canvas = $('#canvas').get(0);
+        canvas.width = 50;
+        canvas.height = 80;
+        let ctx = canvas.getContext('2d');
+
+        ctx.clearRect(0, 0, 50, 80);
+
+        drawBubble(ctx);
+
+        drawArrow(ctx);
+    }
+
+    function drawBubble(ctx) {
+        ctx.save();
+        ctx.beginPath();
+
+        let rate = distance / maxdistance;
+        let maxRa = initRadius - (initRadius  - minHeadRadius) * rate;
+        headerCenter.y = centerY - (initRadius - minHeadRadius) * rate;
+        // 绘制路径
+        ctx.arc(headerCenter.x, headerCenter.y, maxRa, 0, Math.PI, true);
+
+        // 小圆半径
+        let smRa = initRadius - (initRadius - smRadius) * rate;
+        // 小圆中心点
+        let smCenter = {
+            x: centerX,
+            y: headerCenter.y + distance
+        }
+
+        let smCenterL = {
+            x: smCenter.x - smRa,
+            y: smCenter.y
+        }
+
+        let controlL = {
+            x: smCenterL.x,
+            y: smCenter.y - distance/2
+        }
+
+        ctx.quadraticCurveTo(controlL.x, controlL.y, smCenterL.x, smCenterL.y);
+        ctx.arc(smCenter.x, smCenter.y, smRa, Math.PI, 0, true);
+
+        let controlR = {
+            x: smCenter.x + smRa,
+            y: smCenter.y - distance/2
+        }
+
+        let maxR = {
+            x: headerCenter.x + maxRa,
+            y: headerCenter.y
+        }
+        ctx.quadraticCurveTo(controlR.x, controlR.y, maxR.x, maxR.y);
+
+        // 绘制样式
+        ctx.fillStyle = 'rgb(170, 170, 170)';
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgb(153, 153, 153)';
+        ctx.closePath();
+        ctx.restore();
+    }
+
+    function drawArrow(ctx) {
+        ctx.save();
+        ctx.beginPath();
+
+        let rate = distance / maxdistance;
+        let arrowRadius = initArrowRadius - (initArrowRadius - minArrowRadius) * rate;
+
+        // 画内圆
+        ctx.arc(headerCenter.x, headerCenter.y, arrowRadius - (arrowWidth - rate), -Math.PI/2, 0, true);
+        // 外圆
+        ctx.arc(headerCenter.x, headerCenter.y, arrowRadius, 0, Math.PI*3/2, false);
+
+        ctx.lineTo(headerCenter.x, headerCenter.y - arrowRadius - arrowWidth/2);
+        ctx.lineTo(headerCenter.x + 2 * arrowWidth - rate * 2, headerCenter.y - arrowRadius + arrowWidth/2);
+        ctx.lineTo(headerCenter.x, headerCenter.y - arrowRadius + arrowWidth*3/2);
+
+        ctx.fillStyle = 'rgb(255, 255, 255)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgb(170, 170, 170)';
+        ctx.stroke();
+        ctx.closePath();
+        ctx.restore();
+    }
+</script>
+</html>
