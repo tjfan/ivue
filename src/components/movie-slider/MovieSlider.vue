@@ -10,8 +10,7 @@
                     class="list-item swiper-slide"
                     v-for="item in data"
                     :data="item"
-                    :key="item.id"
-                    @click.native="goDetail(item.id)"></item>
+                    :key="item.id"></item>
             </slider>
         </div>
     </div>
@@ -33,13 +32,7 @@ export default {
             default: null
         }
     },
-    methods: {
-        goDetail(id) {
-            this.$router.push({
-                path: `/movie/${id}`
-            });
-        }
-    },
+    methods: {},
     components: {
         Slider,
         Item
