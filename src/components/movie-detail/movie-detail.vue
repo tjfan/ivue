@@ -15,13 +15,13 @@
         </p>
         <p class="meta">{{getMeta}}</p>
       </div>
-      <div class="right">
-        <img :src="data.images.large" alt="">
+      <div class="right" v-if="data.images">
+        <img  v-lazy="replaceUrl(data.images.large)" alt="">
       </div>
     </section>
     <section class="subject-mark">
       <div class="mark-item">
-        <span v-for="item in subjectMark">{{item}}</span>
+        <span v-for="(item, index) in subjectMark" :key="index">{{item}}</span>
       </div>
     </section>
 
@@ -40,10 +40,25 @@
       <p>{{data.summary}}</p>
     </section>
 
-    <section class="subject-intro">
+    <section class="celebrities-wp">
       <h2>影人</h2>
-      <slider>
-        <div class="swiper-slide"></div>
+      <slider :data="data" class="celebrities">
+          <div class="swiper-slide" v-if="data.directors">
+            <div class="img">
+              <img v-lazy="replaceUrl(data.directors[0].avatars.large)" alt="">
+            </div>
+            <span>{{data.directors[0].name}}</span>
+            <span>导演</span>
+          </div>
+          <div 
+            v-for="item in data.casts"
+            :key="item.id" class="swiper-slide">
+            <div class="img">
+              <img v-lazy="replaceUrl(item.avatars.large)" alt="">
+            </div>
+            <span>{{item.name}}</span>
+            <span>演员</span>
+          </div>
       </slider>
     </section>
 
@@ -58,10 +73,7 @@ export default {
   name: 'movieDetail', // 创建name属性用于keep-alive组件定位本组件防止缓存
   data() {
     return {
-      data: {
-        images: {},
-        tags: []
-      },
+      data: {},
       starWidth: 13,
       starHeight: 13,
       starColor: '#111',
@@ -72,21 +84,26 @@ export default {
       ]
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.getMovieDetailInfo();
-    });
+  created() {
+    this.getMovieDetailInfo();
   },
+  mounted() {},
   methods: {
     getMovieDetailInfo() {
       let id = this.$route.params.movieId;
       getMovieDetail(id)
         .then((res) => {
+          if (!id) return;
           this.data = res;
         })
         .catch(err => {
           console.log(err);
         });
+    },
+    replaceUrl(srcUrl) {
+      if (srcUrl !== undefined) { // 图片防盗链处理
+        return ('https://images.weserv.nl/?url=' + srcUrl.replace(/http\w{0,1}:\/\//, ''));
+      }
     }
   },
   computed: {
@@ -96,11 +113,12 @@ export default {
       if (!data.genres) {
         return;
       }
+      let city = data.pubdates.find(item => item.includes('中国大陆'));
       meta = data.durations[0] + ' / ' + data.genres.join(' / ') + ' / ' + data.directors[0].name + '（导演） / ';
       data.casts.forEach((item, index) => {
         meta += data.casts.length === index + 1 ? item.name : item.name + ' / ';
       });
-      return meta;
+      return city ? meta + ' / ' + city + '上映' : meta;
     }
   },
   components: {
@@ -118,7 +136,7 @@ export default {
     section {
       margin-bottom: 60px;
       p {
-        font-size: 15Px;
+        font-size: 14Px;
         color: #494949;
         line-height: 44px;
       }
@@ -155,7 +173,7 @@ export default {
           display: flex;
           .evaluate {
             color: #aaa;
-            font-size: 15Px;
+            font-size: 14Px;
             margin-left: 20px;
           }
         }
@@ -209,6 +227,45 @@ export default {
           height: 6Px;
           transform: rotate(-45deg);
           margin-bottom: 1Px;
+        }
+      }
+    }
+    .celebrities-wp {
+        &::after {
+            .clearfixer
+        }
+      .celebrities {
+        .swiper-slide {
+          .fl();
+          width: 200px;
+          text-align: center;
+          margin-right: 15px;
+          &:nth-last-of-type(1) {
+              margin-right: 0px;
+          }
+          .img {
+            width: 200px;
+            height: 284px;
+            img {
+              height: 100%;
+              width: 100%;
+            }
+          }
+          span {
+              display: -webkit-box;
+              overflow: hidden;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 3;
+              font-size: 14Px;
+              line-height: 1.5;
+              white-space: normal;
+              text-align: center;
+              color: #494949;
+              margin-top: 16px;
+              &:nth-of-type(2) {
+                color: #aaa;
+              }
+          }
         }
       }
     }
