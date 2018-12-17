@@ -6,8 +6,8 @@
         <p class="rating">
           <star 
             :rating="data.rating" 
-            :width="starWidth" 
-            :height="starHeight"
+            :width="13" 
+            :height="13"
             :fontColor="starColor"
             :fontSize="starFontSize"
             class="star"></star>
@@ -62,6 +62,32 @@
       </slider>
     </section>
 
+    <section>
+      <h2>{{data.title}}的短评({{data.comments_count}})</h2>
+      <div class="bd" id="comment-list">
+        <ul class="list comment-list">
+          <li v-for="item in data.popular_comments" :key="item.id">
+            <div class="desc">
+              <div class="img">
+                <img :src="item.author.avatar" alt="">
+              </div>
+              <div class="user-info">
+                <strong>{{item.author.name}}</strong>
+                <star 
+                  :rating="item.rating" 
+                  :width="13" 
+                  :height="13" 
+                  :isGrade="false"
+                  class="stars"></star>
+                <div class="date">{{item.created_at}}</div>
+              </div>
+            </div>
+            <p class="content">{{item.content}}</p>
+            <div class="btn-info"></div>
+          </li>
+        </ul>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -74,8 +100,6 @@ export default {
   data() {
     return {
       data: {},
-      starWidth: 13,
-      starHeight: 13,
       starColor: '#111',
       starFontSize: '15px',
       subjectMark: [
@@ -84,10 +108,11 @@ export default {
       ]
     }
   },
-  created() {
-    this.getMovieDetailInfo();
+  mounted() {
+    this.$nextTick(() => {
+      this.getMovieDetailInfo();
+    });
   },
-  mounted() {},
   methods: {
     getMovieDetailInfo() {
       let id = this.$route.params.movieId;
@@ -109,7 +134,7 @@ export default {
   computed: {
     getMeta() {
       let meta = '';
-      let data = this.data
+      let data = this.data;
       if (!data.genres) {
         return;
       }
@@ -266,6 +291,50 @@ export default {
                 color: #aaa;
               }
           }
+        }
+      }
+    }
+    #comment-list {
+      li {
+          position: relative;
+          padding: 30px 36px 30px 0;
+          word-wrap: break-word;
+          overflow: hidden;
+        .desc {
+          font-size: 0;
+          line-height: normal;
+          margin: 0 0 22px;
+          color: #494949;
+          position: relative;
+          img {
+            width: 72px;
+            border-radius: 50%;
+            vertical-align: text-top;
+            margin-right: 20px;
+            float: left;
+          }
+          strong {
+            font-size: 15Px;
+            display: inline-block;
+            vertical-align: text-top;
+            margin-right: 12px;
+          }
+          .stars {
+            display: inline-block;
+            vertical-align: text-top;
+            margin-top: 8px;
+          }
+          .date {
+            margin-top: 12px;
+            font-size: 12Px;
+            color: #aaa;
+          }
+        }
+        .content {
+            padding: 0 0 0 80px;
+            line-height: 44px;
+            color: #494949;
+            white-space: pre-wrap;
         }
       }
     }
