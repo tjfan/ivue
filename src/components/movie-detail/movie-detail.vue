@@ -62,6 +62,7 @@
       </slider>
     </section>
 
+    <!-- 短评 -->
     <section>
       <h2>{{data.title}}的短评({{data.comments_count}})</h2>
       <div class="bd" id="comment-list">
@@ -85,6 +86,32 @@
             <p class="content">{{item.content}}</p>
             <div class="btn-info"></div>
           </li>
+          <li class="go-comment-list">查看全部短评</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 影评 -->
+    <section class="reviews">
+      <h2>{{data.title}}的影评({{data.reviews_count}})</h2>
+      <div class="bd">
+        <ul class="list">
+          <li v-for="item in data.popular_reviews" :key="item.id">
+            <h3>{{item.title}}</h3>
+            <div class="username">
+              <span>{{item.author.name}}</span>
+              <star 
+                :rating="item.rating" 
+                :width="13" 
+                :height="13" 
+                :isGrade="false"
+                class="stars"></star>
+            </div>
+            <div class="abstract">
+              {{item.summary}}
+            </div>
+          </li>
+          <li class="go-review-list">查看全部影评</li>
         </ul>
       </div>
     </section>
@@ -170,6 +197,12 @@ export default {
       color: #aaa;
       margin: 0 0 30px;
       font-size: 15Px;
+    }
+    .list li {
+      position: relative;
+      padding: 30px 36px 30px 0;
+      word-wrap: break-word;
+      overflow: hidden;
     }
     .movie-name {
       margin: 60px 0 10px;
@@ -296,10 +329,6 @@ export default {
     }
     #comment-list {
       li {
-          position: relative;
-          padding: 30px 36px 30px 0;
-          word-wrap: break-word;
-          overflow: hidden;
         .desc {
           font-size: 0;
           line-height: normal;
@@ -338,5 +367,39 @@ export default {
         }
       }
     }
+
+    // 影评
+    .reviews {
+      h3 {
+        color: #494949;
+        font-weight: 500;
+        font-size: 17Px;
+        line-height: 1.41;
+        margin-bottom: 12px;
+      }
+      .list {
+        .username {
+          .stars {
+            display: inline-block;
+            vertical-align: middle;
+          }
+        }
+        .abstract {
+          line-height: 1.5;
+          font-size: 12Px;
+          color: #aaaaaa;
+          margin-top: 10px;
+        }
+      }
+    }
+
+    .go-review-list, .go-comment-list {
+            text-align: center;
+            padding-bottom: 28px;
+            margin-top: -30px;
+            line-height: 36px;
+            font-size: 15Px;
+            color: #42bd56;
+          }
   }
 </style>
