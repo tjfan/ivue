@@ -1,16 +1,22 @@
 <template>
   <div class="star-wrapper">
-    <span class="rating-stars" v-if="rating.average">
+    <span class="rating-stars" v-if="rating.average || rating.value">
       <span
         class="rating-star"
         v-for="(item, index) in getStarClass"
         :key="index"
         :class="item"
         ref="star"
+        :style="{'width': `${width}px`, 'height': `${height}px`}"
       ></span>
     </span>
-    <span class="grade-num" v-if="rating.average" :style="{'color': fontColor, 'font-size': fontSize}">{{rating.average | putGrade}}</span>
-    <span class="grade" v-else>暂无评分</span>
+    <span 
+      class="grade-num" 
+      v-if="rating.average && isGrade" 
+      :style="{'color': fontColor, 'font-size': fontSize}">
+      {{rating.average ? rating.average : rating.value | putGrade}}
+    </span>
+    <span class="grade" v-if="isGrade && !rating.average">暂无评分</span>
   </div>
 </template>
 
@@ -24,8 +30,14 @@ export default {
         return {};
       }
     },
-    width: 0,
-    height: 0,
+    width: {
+      type: [Number, String],
+      default: 10
+    },
+    height: {
+      type: [Number, String],
+      default: 10
+    },
     fontColor: {
       type: String,
       default: '#aaa'
@@ -33,30 +45,20 @@ export default {
     fontSize: {
       type: String,
       default: '12px'
+    },
+    isGrade: {
+      type: Boolean,
+      default: true
     }
   },
-  updated() {
-    this.$nextTick(() => {
-      this.setStar();
-    });
-  },
-  methods: {
-    setStar() {
-      if (!this.width || !this.height) {
-        return;
-      }
-      let stars = this.$refs.star;
-      for (let i = 0; i < stars.length; i++) {
-        stars[i].style.width = `${this.width}px`;
-        stars[i].style.height = `${this.height}px`
-      }
-    }
-  },
+  updated() {},
+  mounted() {},
+  methods: {},
   computed: {
     getStarClass() {
       let starLength = [];
-      let stars = this.rating.stars.split('');
-      stars.forEach((item, index) => {
+      let stars = this.rating.value ? `${this.rating.value + ''}`.split('') : this.rating.stars.split('');
+      stars.map((item, index) => {
         if (index === 0) {
           for (let i = 0; i < item; i++) {
             starLength.push('rating-star-full');
@@ -67,7 +69,9 @@ export default {
         }
       });
       if (starLength.length < 5) {
-        starLength.push('rating-star-gray');
+          for (let i = 0, len = 5 - starLength.length; i < len; i++) {
+            starLength.push('rating-star-gray');
+          }
       }
       return starLength;
     }
@@ -89,16 +93,9 @@ export default {
     font-size: 12Px;
     color: #aaa;
   }
-  // .grade-num {
-  //   display: inline-block;
-  //   // margin-bottom: 8px;
-  //   // vertical-align: middle;
-  // }
   .rating-stars {
     .rating-star {
       display: inline-block;
-      width: 10Px;
-      height: 10Px;
       background-size: cover;
       margin-right: 4px;
       &.rating-star-full {
