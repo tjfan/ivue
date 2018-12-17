@@ -12,7 +12,10 @@
       <div class="movie-type">
         <div class="title">{{movieType.title}}</div>
         <ul class="main">
-          <li v-for="item in movieType.listType" :key="item.id">
+          <li 
+            v-for="item in movieType.listType" 
+            :key="item.id"
+            @click="goMovieType(item.name)">
             <span>{{item.name}}</span>
             <span class="more"></span>
           </li>
@@ -154,6 +157,14 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    goMovieType(type) {
+      this.$router.push({
+        path: '/movie-type',
+        query: {
+          type: type
+        }
+      });
     }
   },
   components: {
