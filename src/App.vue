@@ -2,7 +2,7 @@
   <div id="app">
     <tab></tab>
     <main>
-      <keep-alive exclude="movieDetail,search,celebrity">
+      <keep-alive exclude="movieDetail,search,celebrity,movie-type">
         <router-view @hasLoad="hasLoad"></router-view>
       </keep-alive>
     </main>
