@@ -13,6 +13,9 @@ const MovieDetail = resolve => require(['@/components/movie-detail/movie-detail'
 // const CelebrityDetail = resolve => require(['components/celebrity-detail/celebrity-detail'], resolve);
 // const CelebrityWorks = resolve => require(['components/celebrity-works/celebrity-works'], resolve);
 
+// 更多电影
+const MovieType = resolve => require(['@/components/movie-type/movie-type'], resolve);
+
 Vue.use(Router);
 
 export default new Router({
@@ -43,6 +46,10 @@ export default new Router({
       //   }
       // ]
     },
+    {
+      path: '/movie-type',
+      component: MovieType
+    }
     // {
     //   path: '/rank',
     //   component: Rank,
