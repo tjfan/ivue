@@ -2,7 +2,7 @@
     <div class="movie-slider-wp">
         <header>
             <h1>{{title}}</h1>
-            <span>更多</span>
+            <span @click="goMovieType">更多</span>
         </header>
         <div class="content">
             <slider class="list-item-wp" :data="data">
@@ -32,7 +32,16 @@ export default {
             default: null
         }
     },
-    methods: {},
+    methods: {
+        goMovieType() {
+            this.$router.push({
+                path: '/movie-type',
+                query: {
+                    type: this.title
+                }
+            });
+        }
+    },
     components: {
         Slider,
         Item
