@@ -45,6 +45,7 @@ export default {
     }
     .title {
         font-size: 13Px;
+        line-height: 14Px;
         .no-wrap();
         margin-top: 20px;
     }
