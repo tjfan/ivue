@@ -1,5 +1,5 @@
 <template>
-    <div class="item-wp">
+    <div class="item-wp" @click="goDetail">
         <div class="img">
             <img :src="data.images.large" alt="">
         </div>
@@ -20,6 +20,13 @@ export default {
             defaul: function () {
                 return {};
             }
+        }
+    },
+    methods: {
+        goDetail() {
+            this.$router.push({
+                path: `/movie/${this.data.id}`
+            });
         }
     },
     components: {
