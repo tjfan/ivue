@@ -32,7 +32,11 @@
 </script>
 
 <style scoped lang='less'>
-  main {
-    padding-top: 94px;
-  }
+#app {
+  height: 100%;
+}
+main {
+  padding-top: 94px;
+  height: 100%;
+}
 </style>
