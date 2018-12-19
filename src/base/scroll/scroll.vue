@@ -3,12 +3,11 @@
     <slot></slot>
     
     <slot 
-      name="pulldown-wrapper"
-      >
+      name="pulldown-wrapper">
       <div class="pulldown-wrapper" ref="pullingdown" v-if="pullDownRefresh">
-          <canvas width="50" height="80" ref="canvas" v-show="!pullDownloading && !refreshTxt"></canvas>
-          <img src="./loading.gif" alt="" width="20" height="20" v-show="pullDownloading && !refreshTxt">
-          <div v-show="refreshTxt && !pullDownloading">加载完成</div>
+          <canvas width="50" height="80" ref="canvas" v-show="beforePullDown"></canvas>
+          <img src="./loading.gif" alt="" width="20" height="20" v-if="isPullingDown">
+          <div v-if="isRefreshTxt">加载完成</div>
       </div>
     </slot>
   </div>
@@ -33,7 +32,7 @@
       y: centerY
   }
   import BScroll from 'better-scroll';
-import { setTimeout } from 'timers';
+  import { setTimeout } from 'timers';
   export default {
     props: {
       probeType: { // 派发滚动事件方式
@@ -73,21 +72,12 @@ import { setTimeout } from 'timers';
         type: null,
         default: false
       },
-      refreshTxt: {
-        type: Boolean,
-        default: false
-      },
-      // 正在加载
-      pullDownloading: {
-        type: Boolean,
-        default: false
-      }
     },
-    updated() {
-      if (this.refreshTxt) {
-        setTimeout(() => {
-          this.scroll.finishPullDown();
-        },300);
+    data() {
+      return {
+        beforePullDown: true,
+        isPullingDown: false,
+        isRefreshTxt: false
       }
     },
     mounted() {
@@ -113,7 +103,7 @@ import { setTimeout } from 'timers';
             this.$emit('scroll', pos);
 
             if (this.pullDownRefresh) {
-              let top = Math.min(pos.y - 45, 10);
+              let top = Math.min(0, pos.y - 45);
               this.$refs.pullingdown.style.top = `${top}px`;
               distance= Math.max(0, Math.min((pos.y - 45), maxdistance));
               this.draw();
@@ -124,6 +114,8 @@ import { setTimeout } from 'timers';
         
         if (this.pullDownRefresh) {
           this.scroll.on('pullingDown', () => {
+            this.beforePullDown = false;
+            this.isPullingDown = true;
             this.$emit('onPullingDown');
           });
         }
@@ -134,6 +126,15 @@ import { setTimeout } from 'timers';
             this.$emit('beforeScroll');
           });
         }
+      },
+      _afterPullDown() {
+        this.isPullingDown = false;
+        this.isRefreshTxt = true;
+        setTimeout(() => {
+          this.scroll.finishPullDown();
+          this.beforePullDown = true;
+          this.isRefreshTxt = false;
+        }, 1000);
       },
       enable() {
         this.scroll && this.scroll.enable();
