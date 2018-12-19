@@ -103,9 +103,9 @@
             this.$emit('scroll', pos);
 
             if (this.pullDownRefresh) {
-              let top = Math.min(0, pos.y - 45);
+              let top = Math.min(0, pos.y - 50);
               this.$refs.pullingdown.style.top = `${top}px`;
-              distance= Math.max(0, Math.min((pos.y - 45), maxdistance));
+              distance= Math.max(0, Math.min((pos.y - 50), maxdistance));
               this.draw();
             }
 
