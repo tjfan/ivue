@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <tab></tab>
-    <main>
+    <main ref="main">
       <keep-alive exclude="movieDetail,search,celebrity,movie-type">
         <router-view @hasLoad="hasLoad"></router-view>
       </keep-alive>
@@ -16,7 +16,7 @@
   export default {
     data() {
       return {
-        loadingFlag: false
+        loadingFlag: false,
       };
     },
     methods: {
@@ -27,6 +27,19 @@
     components: {
       Tab
       // Loading
+    },
+    watch: {
+      '$route'(to, from) {
+        if (to.path.includes('movie-type')) {
+          this.$refs.main.style.height = '100%';
+          this.$refs.main.style.overflow = 'hidden';
+          this.$refs.main.style.boxSizing = 'border-box';
+        } else {
+          this.$refs.main.style.height = 'auto';
+          this.$refs.main.style.overflow = 'none';
+          this.$refs.main.style.boxSizing = 'none';
+        }
+      }
     }
   };
 </script>
@@ -37,6 +50,6 @@
 }
 main {
   padding-top: 94px;
-  height: 100%;
+  height: auto;
 }
 </style>
