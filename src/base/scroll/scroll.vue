@@ -250,15 +250,12 @@
 <style scoped lang="less" rel="stylesheet/less">
 .pulldown-wrapper {
     width: 100%;
-    /* line-height: 80px; */
-    // background-color: gold;
     position: absolute;
-    // top: -140px;
     left: 0px;
     text-align: center;
     &>div {
-      // display: none;
-      margin-top: 40px; 
+      margin-top: 40px;
+      font-size: 16Px; 
     }
     &>img {
       display: none;
@@ -268,7 +265,6 @@
       display: inline-block;
     }
     #canvas {
-        /* background: #f40; */
         margin: 0 auto;
     }
 }
