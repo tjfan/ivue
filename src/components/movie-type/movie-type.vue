@@ -1,10 +1,9 @@
 <template>
     <scroll 
         class="wrapper"
+        ref="scroll"
         :listenScroll="true"
         :pullDownRefresh="pullDownRefresh"
-        :pullDownloading="pullDownloading"
-        :refreshTxt="refreshTxt"
         @onPullingDown="pullingDown">
         <div class="content">
             <h1>{{title}}</h1>
@@ -29,16 +28,14 @@ export default {
             title: '',
             moviedata: [],
             count: 18,
-            pullDownRefresh: null,
-            pullDownloading: false,
-            refreshTxt: false
+            pullDownRefresh: {
+                threshold: 90,
+                stop: 40
+            }
         }
     },
     created() {
         this.title = this.$route.query.type;
-        this.pullDownRefresh = {
-            threshold: 90
-        }
     },
     mounted() {
         this.$nextTick(() => {
@@ -56,7 +53,6 @@ export default {
                 });
         },
         async pullingDown() {
-            this.pullDownloading = true;
             await getMovie(0, this.count)
                 .then(res => {
                     this.moviedata = res;
@@ -64,8 +60,7 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
-            this.pullDownloading = false;
-            this.refreshTxt = true;
+            this.$refs.scroll._afterPullDown();
         }
     },
     components: {
