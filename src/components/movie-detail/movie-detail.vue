@@ -16,7 +16,7 @@
         <p class="meta">{{getMeta}}</p>
       </div>
       <div class="right" v-if="data.images">
-        <img  v-lazy="replaceUrl(data.images.large)" alt="">
+        <img  :src="data.images.large" alt="">
       </div>
     </section>
     <section class="subject-mark">
@@ -45,7 +45,8 @@
       <slider :data="data" class="celebrities">
           <div class="swiper-slide" v-if="data.directors">
             <div class="img">
-              <img v-lazy="replaceUrl(data.directors[0].avatars.large)" alt="">
+              <!-- <img v-lazy="replaceUrl(data.directors[0].avatars.large)" alt=""> -->
+              <img :src="data.directors[0].avatars.large" alt="">
             </div>
             <span>{{data.directors[0].name}}</span>
             <span>导演</span>
@@ -54,7 +55,8 @@
             v-for="item in data.casts"
             :key="item.id" class="swiper-slide">
             <div class="img">
-              <img v-lazy="replaceUrl(item.avatars.large)" alt="">
+              <img :src="item.avatars.large" alt="">
+              <!-- <img v-lazy="replaceUrl(item.avatars.large)" alt=""> -->
             </div>
             <span>{{item.name}}</span>
             <span>演员</span>
@@ -151,11 +153,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-    },
-    replaceUrl(srcUrl) {
-      if (srcUrl !== undefined) { // 图片防盗链处理
-        return ('https://images.weserv.nl/?url=' + srcUrl.replace(/http\w{0,1}:\/\//, ''));
-      }
     }
   },
   computed: {
