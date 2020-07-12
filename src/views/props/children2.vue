@@ -1,22 +1,14 @@
 <template>
   <div>
-    <header>这是children1</header>
-    <Children2
-      v-bind="$attrs"
-    ></Children2>
+    这是children2
   </div>
 </template>
 
 <script>
-import Children2 from './children2';
 export default {
-  components: {
-    Children2
-  },
   props: {
-    foo: String
+    boo: String
   },
-  inheritAttrs: false,
   created() {
     console.log(this.$attrs);
   },

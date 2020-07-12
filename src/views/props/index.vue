@@ -3,7 +3,14 @@
     <header>组件之间传值</header>
     <hr>
     <div>子组件</div>
-    <Children></Children>
+    <Children 
+      class="children1"
+      :foo="foo"
+      :boo="boo"
+      :coo="coo"
+      :doo="doo"
+      title="组件传值"
+    ></Children>
   </div>
 </template>
 
@@ -15,7 +22,10 @@ export default {
   },
   data() {
     return {
-
+      foo: 'javascript',
+      boo: 'html',
+      coo: 'css',
+      doo: 'vue'
     }
   },
   methods: {
